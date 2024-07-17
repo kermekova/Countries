@@ -7,25 +7,28 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.geeks.countries.databinding.ItemCountryBinding;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.CountryViewHolder> {
 
-    private List<Country> countries;
+    private ArrayList<String> countries;
 
-    public CountriesAdapter(List<Country> countries) {
+    public CountriesAdapter(ArrayList<String> countries) {
         this.countries = countries;
     }
 
     @Override
     public CountryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_country, parent, false);
-        return new CountryViewHolder(view);
+
+        return new CountryViewHolder(ItemCountryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(CountryViewHolder holder, int position) {
-        holder.textView.setText(countries.get(position).getName());
+        holder.onBind(countries.get(position));
     }
 
     @Override
@@ -34,11 +37,15 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.Coun
     }
 
     public class CountryViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView;
+        private ItemCountryBinding binding;
 
-        public CountryViewHolder(View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.text_view_country);
+        public CountryViewHolder( ItemCountryBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+        }
+        public void onBind (String country){
+            binding.textViewCountry.setText(country);
         }
     }
 }

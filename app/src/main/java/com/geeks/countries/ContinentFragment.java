@@ -2,6 +2,8 @@ package com.geeks.countries;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,35 +12,50 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.geeks.countries.databinding.FragmentContinentBinding;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ContinentFragment extends Fragment {
+public class ContinentFragment extends Fragment implements OnItemClick {
 
-    private RecyclerView recyclerView;
-    private ContinentAdapter adapter;
-    private List<Continent> continents;
+    private FragmentContinentBinding binding;
+    private ArrayList<String> continents = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_continent, container, false);
+        binding = FragmentContinentBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
+    }
 
-        recyclerView = view.findViewById(R.id.recycler_view_continents);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadData();
 
-        continents = new ArrayList<>();
-        continents.add(new Continent("Asia"));
-        continents.add(new Continent("Africa"));
-        continents.add(new Continent("Europe"));
-        continents.add(new Continent("North America"));
-        continents.add(new Continent("South America"));
-        continents.add(new Continent("Australia"));
-        continents.add(new Continent("Antarctica"));
+        ContinentAdapter adapter = new ContinentAdapter(continents, this);
+        binding.recyclerViewContinents.setAdapter(adapter);
+    }
 
-        adapter = new ContinentAdapter(continents);
-        recyclerView.setAdapter(adapter);
+    private void loadData() {
+        continents.add("Asia");
+        continents.add("Africa");
+        continents.add("Europe");
+        continents.add("North America");
+        continents.add("South America");
+        continents.add("Australia");
+    }
 
-        return view;
+
+    @Override
+    public void onClick(int position) {
+        Bundle bundle = new Bundle();
+        String continent = continents.get(position);
+        bundle.putString("Key", continent);
+        CountriesFragment countriesFragment = new CountriesFragment();
+        countriesFragment.setArguments(bundle);
+        requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, countriesFragment).addToBackStack(null).commit();
+
     }
 }
